@@ -20,6 +20,7 @@ class StoreSurveyRequest extends FormRequest
             'user_id' => $this->user()->id
         ]);
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,12 +31,11 @@ class StoreSurveyRequest extends FormRequest
         return [
             'title' => 'required|string|max:1000',
             'image' => 'nullable|string',
-            'user_id' => 'exists:user_id',
+            'user_id' => 'exists:users,id',
             'status' => 'boolean|required',
             'description' => 'nullable|string',
             'expire_date' => 'nullable|date|after:today',
             'questions' => 'array',
-
         ];
     }
 }

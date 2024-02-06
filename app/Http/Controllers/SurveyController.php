@@ -61,13 +61,11 @@ class SurveyController extends Controller
     public function show(Survey $survey, Request $request)
     {
         $user = $request->user();
-
         if ($user->id !== $survey->user_id) {
-            return abort(403, 'Unauthorized Action!');
+            return abort(403, 'Unauthorized action');
         }
         return new SurveyResource($survey);
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -121,6 +119,7 @@ class SurveyController extends Controller
         return new SurveyResource($survey);
     }
 
+
     /**
      * Remove the specified resource from storage.
      */
@@ -133,7 +132,6 @@ class SurveyController extends Controller
 
         $survey->delete();
 
-        // If there is an old image, delete it
         if ($survey->image) {
             $absolutePath = public_path($survey->image);
             File::delete($absolutePath);
@@ -144,7 +142,6 @@ class SurveyController extends Controller
 
     private function saveImage($image)
     {
-
         if (preg_match('/^data:image\/(\w+);base64,/', $image, $type)) {
 
             $image = substr($image, strpos($image, ',') + 1);
@@ -195,7 +192,7 @@ class SurveyController extends Controller
         return SurveyQuestion::create($validator->validated());
     }
 
-    public function updateQuestion(SurveyQuestion $question, $data)
+    private function updateQuestion(SurveyQuestion $question, $data)
     {
         if (is_array($data['data'])) {
             $data['data'] = json_encode($data['data']);
