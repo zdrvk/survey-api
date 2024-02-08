@@ -8,14 +8,15 @@ use App\Http\Requests\UpdateSurveyRequest;
 use App\Http\Resources\SurveyResource;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Enum;
-// use Illuminate\Validation\Rules\Enum\QuestionTypeEnum;
-// use App\Enums\QuestionTypeEnum;
+
+
 
 class SurveyController extends Controller
 {
@@ -149,7 +150,7 @@ class SurveyController extends Controller
             $type = strtolower($type[1]); // jpg, png, gif
 
             // Check if file is an image
-            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+            if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
                 throw new \Exception('invalid image type');
             }
             $image = str_replace(' ', '+', $image);
@@ -182,7 +183,13 @@ class SurveyController extends Controller
         $validator = Validator::make($data, [
             'question' => 'required|string',
             'type' => [
-                'required', new Enum(QuestionTypeEnum::class)
+                'required', Rule::in([
+                    QuestionTypeEnum::Text->value,
+                    QuestionTypeEnum::Textarea->value,
+                    QuestionTypeEnum::Select->value,
+                    QuestionTypeEnum::Radio->value,
+                    QuestionTypeEnum::Checkbox->value,
+                ])
             ],
             'description' => 'nullable|string',
             'data' => 'present',
